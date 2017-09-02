@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+    <script type="text/javascript" src="node_modules/dbrjs/dist/dynamsoft.barcode.min.js"></script>
+</head>
+<body>
+<h1>Dynamsoft Barcode Reader: Linear, QRCode, PDF417 & DataMatrix</h1>
+<input type="file" id="fileToUpload"/><br>
+<input type="button" value="Read Barcode" onclick="doReadBarcode()" />
+<div id="resultBox"/>
+
+<script type="text/javascript">
+  var dbrObject;
+  function onInitSuccess() {dbrObject = new dynamsoft.dbrEnv.BarcodeReader();}
+  function onInitError(errCode, errMsg) {alert(errMsg);}
+  dynamsoft.dbrEnv.init(onInitSuccess, onInitError);
+
+  function onBarcodeReadSuccess(userData, result) {
+    var count = result.getCount();
+    var strMsg = "";
+    if (count > 0) {
+      for (var i = 0; i < count; i++) {
+        strMsg += "<p>" + "Index: " + i + ". ";
+        strMsg += "Barcode Type: " + result.get(i).formatString + ", ";
+        strMsg += "Barcode Value: " + result.get(i).text + ".</p>";
+      }
+      document.getElementById('resultBox').innerHTML = strMsg;
+    } else {alert("No barcode found.");}
+  }
+
+  function onBarcodeReadFailure(userData, errorCode, errorString) {alert(errorCode + errorString);}
+
+  function doReadBarcode() {
+    var file = document.getElementById("fileToUpload").files[0];
+    dbrObject.readBinaryAsync(file, "tmp", onBarcodeReadSuccess, onBarcodeReadFailure);
+  }
+</script>
+</body>
+</html>
